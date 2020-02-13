@@ -4,7 +4,8 @@ import {Link} from 'react-router-dom';
 
 import api from '../../services/api';
 
-import { Container, Form, SubmitButton, List } from './styles';
+import Container from '../../components/Container';
+import { Form, SubmitButton, List } from './styles';
 
 export default class Main extends Component {
   state = {
@@ -15,10 +16,8 @@ export default class Main extends Component {
 
   componentDidMount(){
     const repositories = localStorage.getItem('repositories');
-    console.log("dddddddddddddd");
 
     if(repositories){
-      console.log("dddddddddddddd");
 
       this.setState({repositories: JSON.parse(repositories)})
     }
