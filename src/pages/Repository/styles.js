@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 
 export const Loading = styled.div`
-  color: #fff;
+  color: #333;
   font-size: 30px;
   font-weight: bold;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh
+  height: 300px
 `;
 
 export const Owner = styled.header`
@@ -59,6 +59,7 @@ export const IssueList = styled.ul`
 
     img {
       height: 36px;
+      width: 36px;
       border-radius: 50%;
       border: 2px solid #eee;
     }
