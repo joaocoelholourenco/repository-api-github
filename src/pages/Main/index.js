@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FaGithubAlt, FaPlus, FaSpinner } from 'react-icons/fa';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import api from '../../services/api';
 
@@ -12,21 +12,22 @@ export default class Main extends Component {
     newRepo: '',
     repositories: [],
     loading: false,
+    error: false,
   };
 
-  componentDidMount(){
+  componentDidMount() {
     const repositories = localStorage.getItem('repositories');
 
-    if(repositories){
+    if (repositories) {
 
-      this.setState({repositories: JSON.parse(repositories)})
+      this.setState({ repositories: JSON.parse(repositories) })
     }
   }
-  componentDidUpdate(_, prevState){
+  componentDidUpdate(_, prevState) {
 
-    const { repositories} = this.state;
+    const { repositories } = this.state;
 
-    if(prevState.repositories !== repositories){
+    if (prevState.repositories !== repositories) {
       localStorage.setItem('repositories', JSON.stringify(repositories));
     }
   }
@@ -42,24 +43,40 @@ export default class Main extends Component {
 
     const { newRepo, repositories } = this.state;
 
-    const response = await api.get(`repos/${newRepo}`)
+    try {
 
-    const data = {
-      name: response.data.full_name,
-    };
+      const repoExist = repositories.filter(repository => repository.name.toLocaleLowerCase === newRepo.toLocaleLowerCase);
 
-    this.setState({
-      repositories: [...repositories, data],
-      newRepo: '',
-      loading: false,
-    });
+      if (repoExist.length) {
+        throw new Error('Repositório duplicado');
+      }
+
+      const response = await api.get(`repos/${newRepo}`);
+
+      const data = {
+        name: response.data.full_name,
+      };
+      this.setState({
+        repositories: [...repositories, data],
+        newRepo: '',
+        loading: false,
+      });
+
+    } catch (error) {
+
+      this.setState({
+        error: true,
+        loading: false,
+      });
+    }
+
 
   }
 
 
   render() {
 
-    const { newRepo, loading, repositories } = this.state;
+    const { newRepo, loading, repositories, error } = this.state;
 
     return (
       <Container>
@@ -68,7 +85,7 @@ export default class Main extends Component {
           Repositórios
         </h1>
 
-        <Form onSubmit={this.handleSubmit}>
+        <Form error={error} onSubmit={this.handleSubmit}>
           <input
             type="text"
             placeholder="Adicionar repositório"
@@ -90,7 +107,7 @@ export default class Main extends Component {
           {repositories.map(repository => (
             <li key={repository.name}>
               <span>{repository.name}</span>
-            <Link to={`/repository/${encodeURIComponent(repository.name)}`}>Detalhes</Link>
+              <Link to={`/repository/${encodeURIComponent(repository.name)}`}>Detalhes</Link>
             </li>
           ))}
         </List>
