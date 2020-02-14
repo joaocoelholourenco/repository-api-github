@@ -45,7 +45,7 @@ export default class Main extends Component {
 
     try {
 
-      const repoExist = repositories.filter(repository => repository.name.toLocaleLowerCase === newRepo.toLocaleLowerCase);
+      const repoExist = repositories.filter(repository => repository.name.toLocaleLowerCase() === newRepo.toLocaleLowerCase());
 
       if (repoExist.length) {
         throw new Error('Repositório duplicado');
